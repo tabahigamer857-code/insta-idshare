@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Metagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff;--fg:#14122b;--mut:#76738f;--line:#e8e6f2;--card:#f6f5fb;--acc:#e11d74;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#100e24;--fg:#f4f2ff;--mut:#9b98b8;--line:#2a2748;--card:#1b1838}}
+:root[data-theme="dark"]{--bg:#100e24;--fg:#f4f2ff;--mut:#9b98b8;--line:#2a2748;--card:#1b1838}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'Outfit',system-ui,sans-serif;display:flex;justify-content:center}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.app{width:100%;max-width:470px;min-height:100vh;padding-bottom:70px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.logo{font-size:28px;font-weight:700;letter-spacing:-1px;background:linear-gradient(90deg,#ff7a18,#e11d74,#6d28d9);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stories{display:flex;gap:14px;overflow-x:auto;padding:14px 16px;border-bottom:1px solid var(--line)}
+.story{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;min-width:64px}
+.ring{width:62px;height:62px;border-radius:50%;padding:3px;background:conic-gradient(#ff7a18,#e11d74,#6d28d9,#ff7a18)}
+.av{width:100%;height:100%;border-radius:50%;border:3px solid var(--bg);display:grid;place-items:center;font-size:24px}
+.post{border-bottom:1px solid var(--line);padding-bottom:10px}
+.ph{display:flex;align-items:center;gap:10px;padding:10px 14px}
+.ph .av{width:34px;height:34px;border:0;font-size:17px;flex:none}
+.ph b{font-weight:500;font-size:14px}.ph small{color:var(--mut);display:block;font-size:12px}
+.pic{aspect-ratio:1;display:grid;place-items:center;font-size:110px;position:relative;user-select:none;cursor:pointer;overflow:hidden}
+.heart{position:absolute;font-size:90px;opacity:0;pointer-events:none;transform:scale(.4)}
+.heart.pop{animation:pop .7s ease}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1)}}
+.acts{display:flex;gap:14px;padding:10px 14px 4px}
+.acts button{font-size:24px;line-height:1}
+.acts .on{color:var(--acc)}
+.meta{padding:0 14px;font-size:14px;line-height:1.45}
+.meta .likes{font-weight:700;margin-bottom:2px}
+.cm{color:var(--mut);margin-top:4px}
+.cmt{margin-top:3px}
+.cform{display:flex;gap:8px;padding:8px 14px 0}
+.cform input{flex:1;background:var(--card);border:1px solid var(--line);color:var(--fg);border-radius:20px;padding:8px 14px;font:inherit;font-size:14px}
+.cform button{color:var(--acc);font-weight:700}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:470px;background:var(--bg);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+nav button{font-size:24px;padding:2px 14px;border-radius:10px}
+nav button[aria-pressed="true"]{color:var(--acc)}
+.view{display:none}.view.show{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.grid div{aspect-ratio:1;display:grid;place-items:center;font-size:44px}
+.prof{padding:20px 16px;display:flex;gap:20px;align-items:center}
+.prof .ring{width:84px;height:84px}
+.prof .av{font-size:36px}
+.stats{display:flex;gap:20px;text-align:center;font-size:13px;color:var(--mut)}.stats b{display:block;font-size:17px;color:var(--fg)}
+.new{padding:16px}
+.new h2{margin:0 0 12px;font-size:20px}
+.prev{aspect-ratio:1;border-radius:12px;display:grid;place-items:center;font-size:110px;margin-bottom:12px}
+.pick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pick button{width:42px;height:42px;border-radius:50%;font-size:20px;background:var(--card);border:2px solid transparent}
+.pick button.sel{border-color:var(--acc)}
+.sw button{border-radius:12px;width:56px}
+.new textarea{width:100%;background:var(--card);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;resize:none;height:80px;margin-bottom:12px}
+.share{width:100%;background:var(--acc);color:#fff;padding:12px;border-radius:12px;font-weight:700;font-size:16px}
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 18px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.heart.pop{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><span class="logo">Metagram</span><button id="theme" aria-label="Toggle dark mode">🌓</button></header>
+
+<section class="view show" id="v-home">
+  <div class="stories" id="stories"></div>
+  <div id="feed"></div>
+</section>
+
+<section class="view" id="v-new">
+  <div class="new">
+    <h2>New post</h2>
+    <div class="prev" id="prev"></div>
+    <div class="pick sw" id="swatches" aria-label="Background"></div>
+    <div class="pick" id="emojis" aria-label="Picture"></div>
+    <textarea id="cap" placeholder="Write a caption…"></textarea>
+    <button class="share" id="share">Share post</button>
+  </div>
+</section>
+
+<section class="view" id="v-me">
+  <div class="prof">
+    <div class="ring"><div class="av" style="background:var(--card)">🙂</div></div>
+    <div class="stats"><div><b id="pc">0</b>posts</div><div><b>128</b>followers</div><div><b>96</b>following</div></div>
+  </div>
+  <div class="grid" id="mine"></div>
+</section>
+
+<nav>
+  <button data-v="home" aria-pressed="true" aria-label="Home">🏠</button>
+  <button data-v="new" aria-pressed="false" aria-label="New post">➕</button>
+  <button data-v="me" aria-pressed="false" aria-label="Profile">👤</button>
+</nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const BG=["linear-gradient(135deg,#ff9a56,#ff3d77)","linear-gradient(135deg,#43e97b,#38f9d7)","linear-gradient(135deg,#6a11cb,#2575fc)","linear-gradient(135deg,#f6d365,#fda085)","linear-gradient(135deg,#0f2027,#2c5364)","linear-gradient(135deg,#ee9ca7,#ffdde1)"];
+const EM=["🌅","🏔️","🐶","🍜","🎸","🌊","🚲","🌸"];
+const SEED=[
+ {id:1,user:"mira.codes",av:"👩‍💻",bg:0,e:"🌅",cap:"Sunrise over the ghats. Worth the 5am alarm.",likes:248,liked:false,t:"2h",c:[["arjun","Unreal colours 😍"]]},
+ {id:2,user:"trek.with.dev",av:"🥾",bg:2,e:"🏔️",cap:"Day 3 of the trek. Legs gone, heart full.",likes:512,liked:false,t:"5h",c:[["sana","Take me next time!"]]},
+ {id:3,user:"biscuit_the_pup",av:"🐶",bg:3,e:"🐶",cap:"Caught mid-zoomies.",likes:1034,liked:false,t:"9h",c:[]},
+ {id:4,user:"street.eats",av:"🍜",bg:1,e:"🍜",cap:"Best noodles in the lane, no contest.",likes:187,liked:false,t:"1d",c:[["ria","Location please!"]]}
+];
+let posts=SEED.map(p=>({...p,c:[...p.c]})), mine=[], sel={bg:0,e:0};
+try{const s=localStorage.getItem("metagram");if(s){const d=JSON.parse(s);posts=d.posts||posts;mine=d.mine||[]}}catch(e){}
+const save=()=>{try{localStorage.setItem("metagram",JSON.stringify({posts,mine}))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),1600)}
+
+function renderStories(){
+ $("stories").innerHTML=posts.slice(0,6).map((p,i)=>`<button class="story"><div class="ring"><div class="av" style="background:${BG[p.bg]}">${p.av}</div></div>${esc(p.user.slice(0,9))}</button>`).join("");
+}
+function renderFeed(){
+ $("feed").innerHTML=posts.map(p=>`
+ <article class="post" data-id="${p.id}">
+  <div class="ph"><div class="av" style="background:${BG[p.bg]}">${p.av}</div><div><b>${esc(p.user)}</b><small>${p.t} ago</small></div></div>
+  <div class="pic" style="background:${BG[p.bg]}" data-act="dbl">${p.e}<span class="heart">❤️</span></div>
+  <div class="acts"><button data-act="like" class="${p.liked?"on":""}" aria-label="Like">${p.liked?"❤️":"🤍"}</button><button data-act="focus" aria-label="Comment">💬</button><button data-act="share" aria-label="Share">📤</button></div>
+  <div class="meta"><div class="likes">${p.likes.toLocaleString()} likes</div>
+   <div><b>${esc(p.user)}</b> ${esc(p.cap)}</div>
+   ${p.c.map(c=>`<div class="cmt"><b>${esc(c[0])}</b> ${esc(c[1])}</div>`).join("")}
+  </div>
+  <div class="cform"><input placeholder="Add a comment…" aria-label="Add a comment"><button data-act="comment">Post</button></div>
+ </article>`).join("");
+}
+function renderMine(){
+ $("pc").textContent=mine.length;
+ $("mine").innerHTML=mine.length?mine.map(p=>`<div style="background:${BG[p.bg]}">${p.e}</div>`).join(""):'<p style="grid-column:1/-1;text-align:center;color:var(--mut);padding:30px">No posts yet. Tap ➕ to share your first one.</p>';
+}
+function like(p,art,force){
+ if(force&&p.liked)return;
+ p.liked=!p.liked;p.likes+=p.liked?1:-1;save();renderFeed();
+}
+$("feed").addEventListener("click",e=>{
+ const art=e.target.closest(".post");if(!art)return;
+ const p=posts.find(x=>x.id==art.dataset.id);const a=e.target.closest("[data-act]");if(!a)return;
+ const act=a.dataset.act;
+ if(act==="like")like(p);
+ if(act==="focus")art.querySelector("input").focus();
+ if(act==="share"){const u=location.href;if(navigator.share){navigator.share({title:"Metagram",url:u}).catch(()=>{})}else{try{navigator.clipboard.writeText(u);toast("Link copied")}catch(x){toast("Share this page's link")}}}
+ if(act==="comment"){const i=art.querySelector("input");const v=i.value.trim();if(v){p.c.push(["you",v]);save();renderFeed()}}
+});
+let last=0;
+$("feed").addEventListener("pointerup",e=>{
+ const pic=e.target.closest(".pic");if(!pic)return;
+ const now=Date.now();
+ if(now-last<350){const art=pic.closest(".post");const p=posts.find(x=>x.id==art.dataset.id);
+  if(!p.liked){like(p)}const h=document.querySelector(`.post[data-id="${p.id}"] .heart`);h.classList.add("pop")}
+ last=now;
+});
+$("feed").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"){e.target.nextElementSibling.click()}});
+
+function drawNew(){
+ $("prev").style.background=BG[sel.bg];$("prev").textContent=EM[sel.e];
+ $("swatches").innerHTML=BG.map((b,i)=>`<button style="background:${b}" class="${i===sel.bg?"sel":""}" data-bg="${i}" aria-label="Background ${i+1}"></button>`).join("");
+ $("emojis").innerHTML=EM.map((e,i)=>`<button class="${i===sel.e?"sel":""}" data-e="${i}">${e}</button>`).join("");
+}
+$("swatches").onclick=e=>{const b=e.target.closest("[data-bg]");if(b){sel.bg=+b.dataset.bg;drawNew()}};
+$("emojis").onclick=e=>{const b=e.target.closest("[data-e]");if(b){sel.e=+b.dataset.e;drawNew()}};
+$("share").onclick=()=>{
+ const cap=$("cap").value.trim();
+ const p={id:Date.now(),user:"you",av:"🙂",bg:sel.bg,e:EM[sel.e],cap:cap||"New post",likes:0,liked:false,t:"now",c:[]};
+ posts.unshift(p);mine.unshift({bg:p.bg,e:p.e});save();
+ $("cap").value="";renderStories();renderFeed();renderMine();show("home");toast("Posted");
+};
+
+function show(v){
+ document.querySelectorAll(".view").forEach(s=>s.classList.toggle("show",s.id==="v-"+v));
+ document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));
+ window.scrollTo(0,0);
+}
+document.querySelector("nav").onclick=e=>{const b=e.target.closest("[data-v]");if(b)show(b.dataset.v)};
+$("theme").onclick=()=>{const r=document.documentElement;const d=getComputedStyle(r).getPropertyValue("--bg").trim()==="#100e24";r.dataset.theme=d?"light":"dark"};
+
+renderStories();renderFeed();renderMine();drawNew();
+</script>
+</body>
+</html>
